@@ -8,7 +8,7 @@ import java.util.List;
 @ActivityInterface
 public interface CreateOrderActivity {
 
-  @ActivityMethod
-  Long createOrder(List<Long> itemIds);
+    @ActivityMethod
+    Long createOrder(List<Long> itemIds);
 
 }

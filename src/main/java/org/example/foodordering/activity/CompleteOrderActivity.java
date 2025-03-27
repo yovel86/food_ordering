@@ -6,7 +6,7 @@ import io.temporal.activity.ActivityMethod;
 @ActivityInterface
 public interface CompleteOrderActivity {
 
-  @ActivityMethod
-  void completeOrder(Long orderId);
+    @ActivityMethod
+    void completeOrder(Long orderId);
 
 }

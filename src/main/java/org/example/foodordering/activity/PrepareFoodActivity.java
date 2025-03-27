@@ -6,7 +6,7 @@ import io.temporal.activity.ActivityMethod;
 @ActivityInterface
 public interface PrepareFoodActivity {
 
-  @ActivityMethod
-  void prepareFood(Long orderId);
+    @ActivityMethod
+    void prepareFood(Long orderId);
 
 }
