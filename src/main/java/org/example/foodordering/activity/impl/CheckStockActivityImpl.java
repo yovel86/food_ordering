@@ -2,8 +2,8 @@ package org.example.foodordering.activity.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.foodorderingsample.activity.CheckStockActivity;
-import org.example.foodorderingsample.repository.FoodItemRepository;
+import org.example.foodordering.activity.CheckStockActivity;
+import org.example.foodordering.repository.FoodItemRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

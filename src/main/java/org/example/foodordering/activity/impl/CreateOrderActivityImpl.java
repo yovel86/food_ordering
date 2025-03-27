@@ -2,10 +2,10 @@ package org.example.foodordering.activity.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.foodorderingsample.activity.CreateOrderActivity;
-import org.example.foodorderingsample.model.Order;
-import org.example.foodorderingsample.model.OrderStatus;
-import org.example.foodorderingsample.repository.OrderRepository;
+import org.example.foodordering.activity.CreateOrderActivity;
+import org.example.foodordering.model.Order;
+import org.example.foodordering.model.OrderStatus;
+import org.example.foodordering.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
