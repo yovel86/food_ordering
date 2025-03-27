@@ -5,7 +5,8 @@ import io.temporal.failure.ApplicationFailure;
 import io.temporal.workflow.CompletablePromise;
 import io.temporal.workflow.Workflow;
 import lombok.extern.slf4j.Slf4j;
-import org.example.foodorderingsample.activity.*;
+import org.example.foodordering.activity.CheckStockActivity;
+import org.example.foodordering.activity.*;
 import org.slf4j.Logger;
 
 import java.time.Duration;
