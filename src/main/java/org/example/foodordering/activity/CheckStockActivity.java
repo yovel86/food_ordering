@@ -8,7 +8,7 @@ import java.util.List;
 @ActivityInterface
 public interface CheckStockActivity {
 
-  @ActivityMethod
-  boolean checkStock(List<Long> itemIds);
+    @ActivityMethod
+    boolean checkStock(List<Long> itemIds);
 
 }

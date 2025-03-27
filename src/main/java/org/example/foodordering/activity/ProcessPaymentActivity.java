@@ -6,7 +6,7 @@ import io.temporal.activity.ActivityMethod;
 @ActivityInterface
 public interface ProcessPaymentActivity {
 
-  @ActivityMethod
-  void processPayment(Long orderId);
+    @ActivityMethod
+    void processPayment(Long orderId);
 
 }

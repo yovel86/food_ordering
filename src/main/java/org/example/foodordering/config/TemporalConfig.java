@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TemporalConfig {
 
-  @Bean
-  public WorkflowClient workflowClient() {
-    WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-    return WorkflowClient.newInstance(service);
-  }
+    @Bean
+    public WorkflowClient workflowClient() {
+        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+        return WorkflowClient.newInstance(service);
+    }
 
 }
