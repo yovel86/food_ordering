@@ -10,7 +10,7 @@ import java.util.List;
 public interface FoodOrderWorkflow {
 
     @WorkflowMethod
-    String processOrder(List<Long> itemIds);
+    String processOrder(String requestId, List<Long> itemIds);
 
     @SignalMethod
     void stocksAreBack();

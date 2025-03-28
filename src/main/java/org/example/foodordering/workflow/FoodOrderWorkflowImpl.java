@@ -22,16 +22,13 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
   private boolean foodPrepared = false;
 
   @Override
-  public String processOrder(List<Long> itemIds) {
+  public String processOrder(String requestId, List<Long> itemIds) {
     if(itemIds == null || itemIds.isEmpty()) {
       throw ApplicationFailure.newNonRetryableFailure("Item IDs cannot be null or empty", "INVALID_INPUT");
     }
 
-    if(requestId == null) {
-      requestId = Workflow.randomUUID().toString();
-      logger.info("Generated new requestId: {}", requestId);
-    } else {
-      logger.info("Resuming workflow with existing requestId: {}", requestId);
+    if(this.requestId == null) {
+      this.requestId = requestId;
     }
 
     ActivityOptions activityOptions = ActivityOptions.newBuilder()

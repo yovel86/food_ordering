@@ -8,11 +8,11 @@ public class Utilities {
     static final Random random = new Random();
 
     public static boolean fakePaymentGateway(Long orderId) {
-        return random.nextInt(10) < 3; // 30% success rate
+        return random.nextInt(10) < 5; // 50% success rate
     }
 
     public static String startDeliveryTracking(Long orderId) {
-        if (random.nextInt(10) < 3) {  // 30% success rate
+        if (random.nextInt(10) < 5) {  // 50% success rate
             return "TRACK-" + UUID.randomUUID();
         }
         return null;
