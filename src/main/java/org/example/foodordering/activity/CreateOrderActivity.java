@@ -9,6 +9,6 @@ import java.util.List;
 public interface CreateOrderActivity {
 
     @ActivityMethod
-    Long createOrder(List<Long> itemIds);
+    Long createOrder(List<Long> itemIds, String requestId);
 
 }

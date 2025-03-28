@@ -19,23 +19,28 @@ public class ProcessPaymentActivityImpl implements ProcessPaymentActivity {
 
     @Override
     public void processPayment(Long orderId) {
-        log.info("Processing payment for order: {}", orderId);
-        boolean paymentSuccess = Utilities.fakePaymentGateway(orderId);
-
-        if (!paymentSuccess) {
-            log.info("Payment failed for order: {}", orderId);
-            throw new RuntimeException("Payment failed for order: " + orderId);
-        }
-
+        log.info("Checking if payment is already processed for order: {}", orderId);
         Order order = this.orderRepository.findById(orderId).orElseThrow(
                 () -> new OrderNotFoundException("Order not found with this ID " + orderId)
         );
+        if (order.isPaymentDone()) {
+            log.info("Payment already processed for order: {}", orderId);
+            return;
+        }
+
+        log.info("Processing payment for Order: {}", orderId);
+        boolean paymentSuccess = Utilities.fakePaymentGateway(orderId);
+
+        if (!paymentSuccess) {
+            log.info("Payment failed for Order: {}", orderId);
+            throw new RuntimeException("Payment failed for Order: " + orderId);
+        }
+
         order.setOrderStatus(OrderStatus.PROCESSING);
+        order.setPaymentDone(true);
         this.orderRepository.save(order);
 
         log.info("Payment successful for order: {}", orderId);
     }
-
-
 
 }

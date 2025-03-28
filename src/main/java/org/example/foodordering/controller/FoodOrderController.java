@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 public class FoodOrderController {
@@ -22,8 +24,9 @@ public class FoodOrderController {
     FoodOrderWorkflow foodOrderWorkflow = workflowClient.newWorkflowStub(
       FoodOrderWorkflow.class,
       WorkflowOptions.newBuilder()
-              .setTaskQueue("FOOD_ORDER_TASK_QUEUE")
-              .build()
+          .setWorkflowId("food-order-" + UUID.randomUUID())
+          .setTaskQueue("FOOD_ORDER_TASK_QUEUE")
+          .build()
     );
 
     WorkflowExecution execution = WorkflowClient.start(

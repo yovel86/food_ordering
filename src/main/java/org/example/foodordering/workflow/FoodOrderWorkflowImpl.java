@@ -17,11 +17,23 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
 
   private static final Logger logger = Workflow.getLogger(FoodOrderWorkflowImpl.class);
 
+  private String requestId;
   private boolean canProceed = false;
-  private final CompletablePromise<Void> foodPreparedSignal = Workflow.newPromise();
+  private boolean foodPrepared = false;
 
   @Override
   public String processOrder(List<Long> itemIds) {
+    if(itemIds == null || itemIds.isEmpty()) {
+      throw ApplicationFailure.newNonRetryableFailure("Item IDs cannot be null or empty", "INVALID_INPUT");
+    }
+
+    if(requestId == null) {
+      requestId = Workflow.randomUUID().toString();
+      logger.info("Generated new requestId: {}", requestId);
+    } else {
+      logger.info("Resuming workflow with existing requestId: {}", requestId);
+    }
+
     ActivityOptions activityOptions = ActivityOptions.newBuilder()
         .setStartToCloseTimeout(Duration.ofSeconds(10))
         .build();
@@ -39,7 +51,7 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
     DeliverOrderActivity deliverOrderActivity = Workflow.newActivityStub(DeliverOrderActivity.class, activityOptions);
     CompleteOrderActivity completeOrderActivity = Workflow.newActivityStub(CompleteOrderActivity.class, activityOptions);
 
-    logger.info("Starting workflow for items: {}", itemIds);
+    logger.info("Starting workflow with requestId: {}, items: {}", requestId, itemIds);
 
     boolean stockAvailable = checkStockActivity.checkStock(itemIds);
     if(!stockAvailable) {
@@ -49,14 +61,14 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
         logger.warn("Stock update timeout! Cancelling the order...");
         throw ApplicationFailure.newNonRetryableFailure("Out of stock!", "STOCK_ERROR");
       }
+      logger.info("Stock updated! Proceeding with order...");
     }
-    logger.info("Stock updated! Proceeding with order...");
 
-    Long orderId = createOrderActivity.createOrder(itemIds);
+    Long orderId = createOrderActivity.createOrder(itemIds, requestId);
     processPaymentActivity.processPayment(orderId);
 
     prepareFoodActivity.prepareFood(orderId);
-    Workflow.await(foodPreparedSignal::isCompleted);
+    Workflow.await(() -> foodPrepared);
     logger.info("Food prepared for order: {}", orderId);
 
     deliverOrderActivity.deliverOrder(orderId);
@@ -74,7 +86,7 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
 
   @Override
   public void foodPrepared() {
-    foodPreparedSignal.complete(null);
+    foodPrepared = true;
   }
 
 }
