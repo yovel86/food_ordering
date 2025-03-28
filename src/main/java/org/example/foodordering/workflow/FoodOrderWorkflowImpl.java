@@ -1,8 +1,8 @@
 package org.example.foodordering.workflow;
 
 import io.temporal.activity.ActivityOptions;
+import io.temporal.common.RetryOptions;
 import io.temporal.failure.ApplicationFailure;
-import io.temporal.workflow.CompletablePromise;
 import io.temporal.workflow.Workflow;
 import lombok.extern.slf4j.Slf4j;
 import org.example.foodordering.activity.CheckStockActivity;
@@ -18,7 +18,7 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
   private static final Logger logger = Workflow.getLogger(FoodOrderWorkflowImpl.class);
 
   private String requestId;
-  private boolean canProceed = false;
+  private boolean stocksAreBack = false;
   private boolean foodPrepared = false;
 
   @Override
@@ -33,15 +33,15 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
 
     ActivityOptions activityOptions = ActivityOptions.newBuilder()
         .setStartToCloseTimeout(Duration.ofSeconds(10))
+        .setRetryOptions(RetryOptions.newBuilder()
+                .setInitialInterval(Duration.ofSeconds(1))
+                .setMaximumInterval(Duration.ofSeconds(30))
+                .setMaximumAttempts(5)
+                .setBackoffCoefficient(2.0)
+                .build())
         .build();
 
-    CheckStockActivity checkStockActivity = Workflow.newActivityStub(
-        CheckStockActivity.class,
-        ActivityOptions.newBuilder()
-          .setStartToCloseTimeout(Duration.ofMinutes(2))
-          .build()
-    );
-
+    CheckStockActivity checkStockActivity = Workflow.newActivityStub(CheckStockActivity.class, activityOptions);
     CreateOrderActivity createOrderActivity = Workflow.newActivityStub(CreateOrderActivity.class, activityOptions);
     ProcessPaymentActivity processPaymentActivity = Workflow.newActivityStub(ProcessPaymentActivity.class, activityOptions);
     PrepareFoodActivity prepareFoodActivity = Workflow.newActivityStub(PrepareFoodActivity.class, activityOptions);
@@ -53,7 +53,7 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
     boolean stockAvailable = checkStockActivity.checkStock(itemIds);
     if(!stockAvailable) {
       logger.info("Out of stock! Waiting for stock update...");
-      boolean signalReceived = Workflow.await(Duration.ofMinutes(1), () -> canProceed);
+      boolean signalReceived = Workflow.await(Duration.ofMinutes(1), () -> stocksAreBack);
       if(!signalReceived) {
         logger.warn("Stock update timeout! Cancelling the order...");
         throw ApplicationFailure.newFailure("Out of stock!", "STOCK_ERROR");
@@ -82,7 +82,7 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
 
   @Override
   public void stocksAreBack() {
-    canProceed = true;
+    stocksAreBack = true;
   }
 
   @Override

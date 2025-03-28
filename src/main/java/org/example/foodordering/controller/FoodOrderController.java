@@ -21,8 +21,6 @@ public class FoodOrderController {
 
   @PostMapping("/process-order")
   public ResponseEntity<String> processOrder(@RequestBody OrderRequestDto orderRequestDto) {
-    String requestId = UUID.randomUUID().toString();
-
     FoodOrderWorkflow foodOrderWorkflow = workflowClient.newWorkflowStub(
       FoodOrderWorkflow.class,
       WorkflowOptions.newBuilder()
@@ -31,6 +29,7 @@ public class FoodOrderController {
           .build()
     );
 
+    String requestId = UUID.randomUUID().toString();
     WorkflowExecution execution = WorkflowClient.start(
       foodOrderWorkflow::processOrder,
       requestId,
