@@ -59,7 +59,7 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
       boolean signalReceived = Workflow.await(Duration.ofMinutes(1), () -> canProceed);
       if(!signalReceived) {
         logger.warn("Stock update timeout! Cancelling the order...");
-        throw ApplicationFailure.newNonRetryableFailure("Out of stock!", "STOCK_ERROR");
+        throw ApplicationFailure.newFailure("Out of stock!", "STOCK_ERROR");
       }
       logger.info("Stock updated! Proceeding with order...");
     }
@@ -68,7 +68,11 @@ public class FoodOrderWorkflowImpl implements FoodOrderWorkflow {
     processPaymentActivity.processPayment(orderId);
 
     prepareFoodActivity.prepareFood(orderId);
-    Workflow.await(() -> foodPrepared);
+    boolean isFoodPrepared = Workflow.await(Duration.ofMinutes(1), () -> foodPrepared);
+    if(!isFoodPrepared) {
+      logger.warn("Food preparation timeout!");
+      throw ApplicationFailure.newFailure("Food is not prepared in time!", "FOOD_PREPARATION_ERROR");
+    }
     logger.info("Food prepared for order: {}", orderId);
 
     deliverOrderActivity.deliverOrder(orderId);
