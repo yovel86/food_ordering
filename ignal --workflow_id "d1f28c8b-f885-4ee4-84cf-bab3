@@ -1,0 +1,28 @@
+[1mdiff --git a/src/main/java/org/example/foodordering/workflow/FoodOrderWorkflowImpl.java b/src/main/java/org/example/foodordering/workflow/FoodOrderWorkflowImpl.java[m
+[1mindex c6a3bee..b160746 100644[m
+[1m--- a/src/main/java/org/example/foodordering/workflow/FoodOrderWorkflowImpl.java[m
+[1m+++ b/src/main/java/org/example/foodordering/workflow/FoodOrderWorkflowImpl.java[m
+[36m@@ -76,5 +76,4 @@[m [mpublic class FoodOrderWorkflowImpl implements FoodOrderWorkflow {[m
+   public void foodPrepared() {[m
+     foodPreparedSignal.complete(null);[m
+   }[m
+[31m-[m
+ }[m
+[1mdiff --git a/src/main/resources/application.properties b/src/main/resources/application.properties[m
+[1mindex aa95a62..b1ec6dd 100644[m
+[1m--- a/src/main/resources/application.properties[m
+[1m+++ b/src/main/resources/application.properties[m
+[36m@@ -3,9 +3,9 @@[m [mspring.application.name=FoodOrdering[m
+ server.port=8081[m
+ [m
+ # Database connection settings[m
+[31m-spring.datasource.url=${DB_URL}[m
+[31m-spring.datasource.username=${DB_USERNAME}[m
+[31m-spring.datasource.password=${DB_PASSWORD}[m
+[32m+[m[32mspring.datasource.url=jdbc:postgresql://localhost:5432/temporal_DB[m
+[32m+[m[32mspring.datasource.username=postgres[m
+[32m+[m[32mspring.datasource.password=postgre[m
+ [m
+ # Hibernate settings[m
+ spring.jpa.hibernate.ddl-auto=update[m
+\ No newline at end of file[m
